@@ -5,15 +5,16 @@ body {
   font-weight: normal;
 }
 
+canvas {
+  display: block;
+}
+
 #rainbow canvas {
   cursor: crosshair;
 }
+
 #rainbow .cursor-off {
   cursor: none;
-}
-
-canvas {
-  display: block;
 }
 
 #rainbow .controllers {
@@ -46,7 +47,7 @@ canvas {
   margin-right: 0;
 }
 
-span.key {
+#rainbow span.key {
   padding: 7px 10px;
   text-align: center;
   background: #f3f3f3;
