@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Rainbow</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/easings.js" charset="utf-8"></script>
+</head>
+
+<body>
+  <canvas id="canvas" width="300" height="300"></canvas>
+
+  <script type="text/javascript">
+    ////////////////////////////////////////////////////////////
+    // DOC SETUP
+    ////////////////////////////////////////////////////////////
+    var canvas = document.querySelector('canvas');
+    var c = canvas.getContext('2d');
+
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    canvas.width = w;
+    canvas.height = h;
+
+    var mouse = {
+      x: undefined,
+      y: undefined
+    }
+
+    ////////////////////////////////////////////////////////////
+    // EVENTS
+    ////////////////////////////////////////////////////////////
+
+    window.addEventListener('mousemove', function(event) {
+      mouse.x = event.x;
+      mouse.y = event.y;
+    });
+
+    window.addEventListener('mouseout', function(event) {
+      mouse.x = undefined;
+      mouse.y = undefined;
+      console.log("Mouse out of bounds.")
+    });
+
+    window.addEventListener('resize', function(event) {
+      w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+      canvas.width = w;
+      canvas.height = h;
+
+      // init();
+    });
+  </script>
+
+</body>
+
+</html>

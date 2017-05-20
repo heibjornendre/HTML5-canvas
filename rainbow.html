@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Rainbow</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/easings.js" charset="utf-8"></script>
+</head>
+
+<body id="rainbow">
+  <div id="controllers" class="controllers">
+    <a href="#" id="reset" class="button" title="Clear the canvas" onclick="clearCanvas();return false;">Clear <span class="key">x</span></a>
+    <a href="#" id="bigger" class="button" title="Set the brush to a bigger size" onclick="biggerBrush();return false;">Bigger brush <span class="key">+</span></a>
+    <a href="#" id="smaller" class="button" title="Set the brush to a smaller size" onclick="smallerBrush();return false;">Smaller brush <span class="key">–</span></a>
+  </div>
+  <canvas id="canvas" width="300" height="300"></canvas>
+
+  <script type="text/javascript">
+    ////////////////////////////////////////////////////////////
+    // DOC SETUP
+    ////////////////////////////////////////////////////////////
+    var canvas = document.querySelector('canvas');
+    var c = canvas.getContext('2d');
+
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    canvas.width = w;
+    canvas.height = h;
+
+    var controllersElm = document.getElementById("controllers");
+
+    var mouse = {
+      x: undefined,
+      y: undefined,
+      isDrawing: false,
+      isOnCanvas: false,
+      lastX: 0,
+      lastY: 0,
+      hue: 0,
+      brushSize: 100,
+      maxBrush: 150,
+      minBrush: 50
+    };
+
+
+    function brushSetup() {
+      c.strokeStyle = 'hsl(' + mouse.hue + ', 80%, 50%)';
+      c.lineJoin = 'round';
+      c.lineCap = 'round';
+      c.lineWidth = mouse.brushSize;
+    }
+
+    function clearCanvas() {
+      c.clearRect(0, 0, w, h);
+      console.log("Clearing canvas");
+    }
+
+    function biggerBrush() {
+      if (mouse.brushSize < mouse.maxBrush) {
+        mouse.brushSize += 10;
+      } else {
+        mouse.brushSize = mouse.maxBrush;
+      }
+      c.lineWidth = mouse.brushSize;
+      console.log("Bigger brush: " + mouse.brushSize);
+    }
+
+    function smallerBrush() {
+      if (mouse.brushSize > mouse.minBrush) {
+        mouse.brushSize -= 10;
+      } else {
+        mouse.brushSize = mouse.minBrush;
+      }
+      c.lineWidth = mouse.brushSize;
+      console.log("Smaller brush: " + mouse.brushSize);
+    }
+
+    function showControllers(show) {
+      if (show) {
+        controllersElm.classList.remove('np');
+        controllersElm.classList.add('controllers-hover');
+      } else {
+        controllersElm.classList.add('np');
+        controllersElm.classList.remove('controllers-hover');
+      }
+    }
+
+    function draw(e) {
+      if (!mouse.isDrawing) return;
+      // console.log(e);
+      c.strokeStyle = 'hsl(' + mouse.hue + ', 80%, 50%)';
+
+
+      c.beginPath();
+      c.moveTo(mouse.lastX, mouse.lastY);
+      c.lineTo(e.offsetX, e.offsetY);
+      c.stroke();
+
+      // spansElm = controllersElm.childNodes;
+      // console.log(spansElm);
+      // for(var i=0; i<spansElm.length; i++) {
+      //     if (spansElm[i].nodeName.toLowerCase() == 'span') {
+      //          spansElm[i].style.color = 'hsl(' + mouse.hue + ' , 80%, 20%)';
+      //      }
+      // }
+
+      spansElm = controllersElm.getElementsByTagName('span');
+      for(i=0; i<spansElm.length; i++) {
+        spansElm[i].style.color = 'hsl(' + mouse.hue + ' , 20%, 35%)';
+      }
+      controllersElm.style.backgroundColor = 'hsl(' + mouse.hue + ' , 80%, 50%)';
+
+      mouse.lastX = e.offsetX;
+      mouse.lastY = e.offsetY;
+      mouse.hue++;
+      if (mouse.hue >= 360) {
+        mouse.hue = 0;
+      }
+    }
+
+
+    ////////////////////////////////////////////////////////////
+    // EVENTS
+    ////////////////////////////////////////////////////////////
+
+    var activeControllers = false;
+
+    controllersElm.onmouseover = function() {
+      activeControllers = true;
+    }
+    controllersElm.onmouseout = function() {
+      activeControllers = false;
+    }
+
+    window.addEventListener('mousemove', function(e) {
+      draw(e);
+
+      if (!mouse.isOnCanvas) {
+        mouse.isOnCanvas = true;
+        // showControllers(false);
+        console.count("Mouse entered canvas.");
+      }
+    });
+
+    window.addEventListener('mousedown', function(e) {
+      if (mouse.isOnCanvas) {
+        mouse.isDrawing = true;
+        mouse.lastX = e.offsetX;
+        mouse.lastY = e.offsetY;
+        canvas.classList.add('cursor-off');
+        showControllers(false);
+      }
+      console.log("Drawing!")
+    });
+    window.addEventListener('mouseup', function() {
+      mouse.isDrawing = false;
+      canvas.classList.remove('cursor-off');
+      // controllersElm.classList.remove('np');
+      showControllers(true);
+    });
+
+    window.addEventListener('mouseout', function(event) {
+      mouse.isDrawing = false;
+      mouse.isOnCanvas = false;
+      showControllers(true);
+      console.count("Mouse left canvas.");
+    });
+
+    window.addEventListener('resize', function(event) {
+      clearCanvas();
+      w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+      canvas.width = w;
+      canvas.height = h;
+      brushSetup();
+    });
+
+    window.addEventListener("keypress", function(event) {
+      if (event.keyCode === 88 || event.keyCode === 120) {
+        clearCanvas();
+      };
+
+      if (event.keyCode === 43) {
+        biggerBrush();
+      };
+
+      if (event.keyCode === 45) {
+        smallerBrush();
+      };
+      // console.log(event.keyCode);
+    });
+
+    brushSetup();
+    showControllers(true);
+  </script>
+
+</body>
+
+</html>
