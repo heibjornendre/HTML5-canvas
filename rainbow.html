@@ -10,11 +10,13 @@
 </head>
 
 <body id="rainbow">
-  <div id="controllers" class="controllers">
-    <a href="#" id="reset" class="button" title="Clear the canvas" onclick="clearCanvas();return false;">Clear <span class="key">x</span></a>
-    <a href="#" id="bigger" class="button" title="Set the brush to a bigger size" onclick="biggerBrush();return false;">Bigger brush <span class="key">+</span></a>
-    <a href="#" id="smaller" class="button" title="Set the brush to a smaller size" onclick="smallerBrush();return false;">Smaller brush <span class="key">–</span></a>
-  </div>
+  <ul class="controllers">
+    <li>Clear <span class="key">x</span></li>
+    <li>Bigger brush <span class="key">+</span></li>
+    <li>Smaller brush <span class="key">–</span></li>
+    <li>Brush size: <span class="brushsize">150</span></li>
+  </ul>
+
   <canvas id="canvas" width="300" height="300"></canvas>
 
   <script type="text/javascript">
@@ -29,8 +31,6 @@
     canvas.width = w;
     canvas.height = h;
 
-    var controllersElm = document.getElementById("controllers");
-
     var mouse = {
       x: undefined,
       y: undefined,
@@ -44,6 +44,8 @@
       minBrush: 50
     };
 
+    var brushsizeElm = document.getElementsByClassName("brushsize")[0];
+    brushsizeElm.innerText = mouse.brushSize;
 
     function brushSetup() {
       c.strokeStyle = 'hsl(' + mouse.hue + ', 80%, 50%)';
@@ -64,6 +66,7 @@
         mouse.brushSize = mouse.maxBrush;
       }
       c.lineWidth = mouse.brushSize;
+      brushsizeElm.innerText = mouse.brushSize;
       console.log("Bigger brush: " + mouse.brushSize);
     }
 
@@ -74,43 +77,18 @@
         mouse.brushSize = mouse.minBrush;
       }
       c.lineWidth = mouse.brushSize;
+      brushsizeElm.innerText = mouse.brushSize;
       console.log("Smaller brush: " + mouse.brushSize);
-    }
-
-    function showControllers(show) {
-      if (show) {
-        controllersElm.classList.remove('np');
-        controllersElm.classList.add('controllers-hover');
-      } else {
-        controllersElm.classList.add('np');
-        controllersElm.classList.remove('controllers-hover');
-      }
     }
 
     function draw(e) {
       if (!mouse.isDrawing) return;
-      // console.log(e);
+
       c.strokeStyle = 'hsl(' + mouse.hue + ', 80%, 50%)';
-
-
       c.beginPath();
       c.moveTo(mouse.lastX, mouse.lastY);
       c.lineTo(e.offsetX, e.offsetY);
       c.stroke();
-
-      // spansElm = controllersElm.childNodes;
-      // console.log(spansElm);
-      // for(var i=0; i<spansElm.length; i++) {
-      //     if (spansElm[i].nodeName.toLowerCase() == 'span') {
-      //          spansElm[i].style.color = 'hsl(' + mouse.hue + ' , 80%, 20%)';
-      //      }
-      // }
-
-      spansElm = controllersElm.getElementsByTagName('span');
-      for (i = 0; i < spansElm.length; i++) {
-        spansElm[i].style.color = 'hsl(' + mouse.hue + ' , 20%, 35%)';
-      }
-      controllersElm.style.backgroundColor = 'hsl(' + mouse.hue + ' , 80%, 50%)';
 
       mouse.lastX = e.offsetX;
       mouse.lastY = e.offsetY;
@@ -125,21 +103,11 @@
     // EVENTS
     ////////////////////////////////////////////////////////////
 
-    var activeControllers = false;
-
-    controllersElm.onmouseover = function() {
-      activeControllers = true;
-    }
-    controllersElm.onmouseout = function() {
-      activeControllers = false;
-    }
-
     window.addEventListener('mousemove', function(e) {
       draw(e);
 
       if (!mouse.isOnCanvas) {
         mouse.isOnCanvas = true;
-        // showControllers(false);
         console.count("Mouse entered canvas.");
       }
     });
@@ -150,21 +118,17 @@
         mouse.lastX = e.offsetX;
         mouse.lastY = e.offsetY;
         canvas.classList.add('cursor-off');
-        showControllers(false);
       }
       console.log("Drawing!")
     });
     window.addEventListener('mouseup', function() {
       mouse.isDrawing = false;
       canvas.classList.remove('cursor-off');
-      // controllersElm.classList.remove('np');
-      showControllers(true);
     });
 
     window.addEventListener('mouseout', function(event) {
       mouse.isDrawing = false;
       mouse.isOnCanvas = false;
-      showControllers(true);
       console.count("Mouse left canvas.");
     });
 
@@ -193,7 +157,6 @@
     });
 
     brushSetup();
-    showControllers(true);
   </script>
 
 </body>
