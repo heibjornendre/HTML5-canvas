@@ -39,13 +39,17 @@
       lastX: 0,
       lastY: 0,
       hue: 0,
-      brushSize: 100,
-      maxBrush: 150,
+      brushSize: 150,
+      maxBrush: 200,
       minBrush: 50
     };
 
     var brushsizeElm = document.getElementsByClassName("brushsize")[0];
     brushsizeElm.innerText = mouse.brushSize;
+
+    var clearKey = document.getElementsByClassName("key")[0];
+    var biggerKey = document.getElementsByClassName("key")[1];
+    var smallerKey = document.getElementsByClassName("key")[2];
 
     function brushSetup() {
       c.strokeStyle = 'hsl(' + mouse.hue + ', 80%, 50%)';
@@ -57,27 +61,36 @@
     function clearCanvas() {
       c.clearRect(0, 0, w, h);
       console.log("Clearing canvas");
+      clearKey.classList.add("active");
     }
 
     function biggerBrush() {
       if (mouse.brushSize < mouse.maxBrush) {
         mouse.brushSize += 10;
+        biggerKey.classList.add("active");
+        brushsizeElm.innerText = mouse.brushSize;
       } else {
         mouse.brushSize = mouse.maxBrush;
+        biggerKey.classList.remove("active");
+        // brushsizeElm.innerText = mouse.brushSize + ' (max)';
+        brushsizeElm.innerText = 'max';
       }
       c.lineWidth = mouse.brushSize;
-      brushsizeElm.innerText = mouse.brushSize;
       console.log("Bigger brush: " + mouse.brushSize);
     }
 
     function smallerBrush() {
       if (mouse.brushSize > mouse.minBrush) {
         mouse.brushSize -= 10;
+        smallerKey.classList.add("active");
+        brushsizeElm.innerText = mouse.brushSize;
       } else {
         mouse.brushSize = mouse.minBrush;
+        smallerKey.classList.remove("active");
+        // brushsizeElm.innerText = mouse.brushSize + ' (min)';
+        brushsizeElm.innerText = 'min';
       }
       c.lineWidth = mouse.brushSize;
-      brushsizeElm.innerText = mouse.brushSize;
       console.log("Smaller brush: " + mouse.brushSize);
     }
 
@@ -142,6 +155,7 @@
     });
 
     window.addEventListener("keypress", function(event) {
+
       if (event.keyCode === 88 || event.keyCode === 120) {
         clearCanvas();
       };
@@ -154,6 +168,12 @@
         smallerBrush();
       };
       // console.log(event.keyCode);
+    });
+
+    window.addEventListener("keyup", function(event) {
+      clearKey.classList.remove("active");
+      biggerKey.classList.remove("active");
+      smallerKey.classList.remove("active");
     });
 
     brushSetup();
