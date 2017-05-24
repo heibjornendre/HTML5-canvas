@@ -1,0 +1,9 @@
+{
+  "name": "html-canvas",
+  "version": "1.0.0",
+  "description": "Testing html canvas",
+  "main": "index.js",
+  "repository": "https://github.com/heibjornendre/HTML5-canvas.git",
+  "author": "heibjornendre <bjorn.breivik@gmail.com>",
+  "license": "MIT"
+}
